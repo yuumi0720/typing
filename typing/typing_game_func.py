@@ -78,8 +78,6 @@ class TypingGame:
             #     self.words = tf.load_words('difficult_words.txt')
             #     break
             
-
-
         self.broadcast("ゲーム開始まで2秒...")
         time.sleep(2)
 
