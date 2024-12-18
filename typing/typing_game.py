@@ -23,10 +23,10 @@ elif args.mode in ['server', 'client']:
         subprocess.Popen(["python3", "typing_server.py"])
         print("サーバーをバックグラウンドで起動しました。")
         time.sleep(0.1)
-        client.TypingClinet().start()
+        client.TypingClient().start()
     else:
         time.sleep(0.1)
-        client.TypingClinet().start()
+        client.TypingClient().start()
 
 
 
