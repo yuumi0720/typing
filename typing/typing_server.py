@@ -1,6 +1,8 @@
 import socket
+import asyncio
 import typing_game_func as tgf
 import team_func as taem
+import league_func as lg
 
 class TypingServer:
     def __init__(self, host='0.0.0.0', port=65432):
@@ -45,8 +47,11 @@ class TypingServer:
         # game_mode = self.recv_message(self.client_sockets[0])
 
         # if game_mode == "vs":
-        game = tgf.TypingGame(self.server_socket, self.client_sockets)
-        game.start_game()
+        # game = tgf.TypingGame(self.server_socket, self.client_sockets)
+        # game.start_game()
+
+        game = lg.LeagueGame(self.server_socket, self.client_sockets)
+        asyncio.run(game.start_league())
         # elif game_mode == "team":
         #     game = taem.TeamTypingGame(self.server_socket, self.client_sockets)
         #     game.start_game()

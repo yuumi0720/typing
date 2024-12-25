@@ -58,7 +58,7 @@ class TypingClient:
                     print("\nゲーム終了")
                     winner_result = self.recv_message(self.client_socket)
                     print(winner_result)
-                    break  # ゲーム終了時
+                    continue  # ゲーム終了時
                 
                 elif "単語" in word:
                     print(f"\n{word}")
