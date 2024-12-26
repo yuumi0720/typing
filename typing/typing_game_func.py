@@ -119,7 +119,7 @@ class TypingGame:
             #結果を表示
             self.send_results_to_clients(player_times, self.player_scores, self.player_names)
 
-        self.broadcast("end_game")
+        self.broadcast("end_game1")
         # 勝敗の決定
         winner = self.player_scores.index(max(self.player_scores))
         time.sleep(0.1)

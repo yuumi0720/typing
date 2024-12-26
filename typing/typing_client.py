@@ -54,11 +54,17 @@ class TypingClient:
                 #     result = self.recv_message(self.client_socket)
                 #     print(result)
                 #     continue
-                if word == "end_game" or not word:
+                if word == "end_game1" or not word:
                     print("\nゲーム終了")
                     winner_result = self.recv_message(self.client_socket)
                     print(winner_result)
                     continue  # ゲーム終了時
+
+                elif word == "end_game2":
+                    print("\nゲーム終了")
+                    winner_result = self.recv_message(self.client_socket)
+                    print(winner_result)
+                    break
                 
                 elif "単語" in word:
                     print(f"\n{word}")
@@ -71,6 +77,9 @@ class TypingClient:
                     
                     score_result = self.recv_message(self.client_socket)
                     print(score_result)
+
+                else:
+                    print(word)
                         
         except Exception as e:
             print(f"エラー: {e}")

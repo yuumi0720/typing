@@ -66,10 +66,8 @@ class LeagueGame:
         player_names = [player1["name"], player2["name"]]
 
         game = tgf.TypingGame(self.server_socket, [player1["socket"], player2["socket"]], player_names)
-        print(f"開始: {player1['name']} vs {player2['name']}")
         try:
             await asyncio.to_thread(game.start_game)
-            print(f"終了: {player1['name']} vs {player2['name']}")
         except Exception as e:
             print(f"試合中にエラー: {e}")
 
@@ -107,5 +105,6 @@ class LeagueGame:
 
             self.show_results()
 
+        self.broadcast("end_game2")
         winner = max(self.players, key=lambda player: player["win"])
         self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")
