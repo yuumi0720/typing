@@ -41,6 +41,9 @@ class TypingClient:
                 # elif message == "mode_select":
                 #     mode_select = input("モードを選択 easy or hard >> ")
                 #     self.send_message(self.client_socket, mode_select)
+                elif message in 'vs':
+                    print(message)
+                    input("準備ができたらEnterキーを押してください...")
 
                 elif "ゲーム開始" in message:
                     print(message)
@@ -61,7 +64,6 @@ class TypingClient:
                     continue  # ゲーム終了時
 
                 elif word == "end_game2":
-                    print("\nゲーム終了")
                     winner_result = self.recv_message(self.client_socket)
                     print(winner_result)
                     break

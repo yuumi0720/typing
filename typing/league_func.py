@@ -57,7 +57,6 @@ class LeagueGame:
             rounds.append(current_round)
 
         self.rounds = rounds
-        print("ラウンドごとの試合スケジュール:", self.rounds)
 
             # all_matches = list(set(all_matches) - set(current_round))
 
@@ -99,9 +98,16 @@ class LeagueGame:
             for player1_idx, player2_idx in current_round:
                 plyaer1 = self.players[player1_idx]
                 player2 = self.players[player2_idx]
+                self.broadcast(f"{plyaer1['name']} vs {player2['name']}")
                 current_matches.append(self.play_match(plyaer1, player2))
-
-            await asyncio.gather(*current_matches, return_exceptions=True)
+            
+            try:
+                results = await asyncio.gather(*current_matches, return_exceptions=True)
+                for result in results:
+                    if isinstance(result, Exception):
+                        print(f"試合中にエラー: {result}")
+            except Exception as e:
+                print(f"ラウンド{round_idx+1}にエラー: {e}")
 
             self.show_results()
 
