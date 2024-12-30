@@ -3,13 +3,14 @@ import time
 import typing_functions as tf
 
 class TypingGame:
-    def __init__(self, server_socket, client_sockets, player_names=None):
+    def __init__(self, server_socket, client_sockets,  end_massage, player_names=None):
         self.server_socket = server_socket
         self.client_sockets = client_sockets
         self.score_limit = 2
         self.words = []
         self.player_scores = [0] * (len(client_sockets)) 
         self.player_names = player_names if player_names else []
+        self.end_massage = end_massage
 
     def send_message(self, socket, message):
         socket.sendall(message.encode('utf-8'))
@@ -119,8 +120,9 @@ class TypingGame:
             #結果を表示
             self.send_results_to_clients(player_times, self.player_scores, self.player_names)
 
-        self.broadcast("end_game1")
+        self.broadcast(self.end_massage)
         # 勝敗の決定
+
         winner = self.player_scores.index(max(self.player_scores))
         time.sleep(0.1)
         self.broadcast(f"{self.player_names[winner]}が勝利しました！")

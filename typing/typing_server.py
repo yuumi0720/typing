@@ -47,7 +47,7 @@ class TypingServer:
         # game_mode = self.recv_message(self.client_sockets[0])
 
         # if game_mode == "vs":
-        # game = tgf.TypingGame(self.server_socket, self.client_sockets)
+        # game = tgf.TypingGame(self.server_socket, self.client_sockets, "end_game2")
         # game.start_game()
 
         game = lg.LeagueGame(self.server_socket, self.client_sockets)
