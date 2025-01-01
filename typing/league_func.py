@@ -1,7 +1,7 @@
 
 import itertools
 import asyncio
-import random
+import time
 import threading
 import typing_game_func as tgf
 
@@ -21,6 +21,7 @@ class LeagueGame:
             print("クライアントが切断されました。")
 
     def recv_message(self, socket):
+
         try:
             return socket.recv(1024).decode('utf-8').strip()
         except Exception as e:
@@ -58,11 +59,14 @@ class LeagueGame:
 
         self.rounds = rounds
 
-            # all_matches = list(set(all_matches) - set(current_round))
 
 
     async def play_match(self, player1, player2):
         player_names = [player1["name"], player2["name"]]
+        
+        self.send_message(player1["socket"], f"\n{player1['name']} vs {player2['name']}")
+        self.send_message(player2["socket"], f"\n{player1['name']} vs {player2['name']}")
+                
 
         game = tgf.TypingGame(self.server_socket, [player1["socket"], player2["socket"]], "end_game1", player_names)
         try:
@@ -87,19 +91,17 @@ class LeagueGame:
             self.players[i]["socket"] = client_socket
 
 
-
         #試合の組み合わせ
         self.generate_rounds()
 
         #試合開始
         for round_idx, current_round in enumerate(self.rounds):
-            print(f"ラウンド{round_idx+1}開始")
             current_matches = []
             for player1_idx, player2_idx in current_round:
-                plyaer1 = self.players[player1_idx]
+                player1 = self.players[player1_idx]
                 player2 = self.players[player2_idx]
-                self.broadcast(f"{plyaer1['name']} vs {player2['name']}")
-                current_matches.append(self.play_match(plyaer1, player2))
+                
+                current_matches.append(self.play_match(player1, player2))
             
             try:
                 results = await asyncio.gather(*current_matches, return_exceptions=True)
@@ -110,7 +112,9 @@ class LeagueGame:
                 print(f"ラウンド{round_idx+1}にエラー: {e}")
 
             self.show_results()
+            input("確認出来たらEnter>>")
 
         self.broadcast("end_game2")
+        time.sleep(0.4)
         winner = max(self.players, key=lambda player: player["win"])
         self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")

@@ -41,35 +41,31 @@ class TypingClient:
                 # elif message == "mode_select":
                 #     mode_select = input("モードを選択 easy or hard >> ")
                 #     self.send_message(self.client_socket, mode_select)
-                elif message in 'vs':
-                    print(message)
-                    input("準備ができたらEnterキーを押してください...")
-
+                
                 elif "ゲーム開始" in message:
                     print(message)
-                    break
                 
-            while True:               
                 # サーバーから単語を受け取る
-                word = self.recv_message(self.client_socket)
                 # if word == "wait":
                 #     print("\nwait...")
                 #     result = self.recv_message(self.client_socket)
                 #     print(result)
                 #     continue
-                if word == "end_game1" or not word:
+                elif message == "end_game1":
+                    time.sleep(0.2)
                     print("\nゲーム終了")
                     winner_result = self.recv_message(self.client_socket)
                     print(winner_result)
                     continue  # ゲーム終了時
 
-                elif word == "end_game2":
+                elif message == "end_game2":
+                    time.sleep(0.2)
                     winner_result = self.recv_message(self.client_socket)
                     print(winner_result)
                     break
                 
-                elif "単語" in word:
-                    print(f"\n{word}")
+                elif "単語" in message:
+                    print(f"\n{message}")
                     start_time = time.time()
                     player_input = input("入力: ")
                     player_time = time.time() - start_time
@@ -81,7 +77,7 @@ class TypingClient:
                     print(score_result)
 
                 else:
-                    print(word)
+                    print(message)
                         
         except Exception as e:
             print(f"エラー: {e}")

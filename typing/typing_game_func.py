@@ -57,7 +57,6 @@ class TypingGame:
             results += f"[{player_names[i]}] {player_scores[i]}"
     
         self.broadcast(results)
-        #print(results)
        
        
     def start_game(self):
@@ -81,8 +80,8 @@ class TypingGame:
             #     self.words = tf.load_words('difficult_words.txt')
             #     break
             
-        self.broadcast("ゲーム開始まで2秒...")
-        time.sleep(2)
+        self.broadcast("ゲーム開始まで3秒...")
+        time.sleep(3)
 
         # ゲーム進行
         while max(self.player_scores) < self.score_limit:
