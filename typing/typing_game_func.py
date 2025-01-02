@@ -120,10 +120,10 @@ class TypingGame:
             self.send_results_to_clients(player_times, self.player_scores, self.player_names)
 
         self.broadcast(self.end_massage)
+        
         # 勝敗の決定
-
+        time.sleep(0.2)
         winner = self.player_scores.index(max(self.player_scores))
-        time.sleep(0.1)
+        time.sleep(0.3)
         self.broadcast(f"{self.player_names[winner]}が勝利しました！")
-        time.sleep(0.4)
        

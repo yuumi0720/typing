@@ -77,7 +77,7 @@ class TypingClient:
                     print(score_result)
 
                 else:
-                    print(message)
+                    print("\n" + message)
                         
         except Exception as e:
             print(f"エラー: {e}")

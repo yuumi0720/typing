@@ -21,47 +21,66 @@ class TypingServer:
 
     def recv_message(self, socket):
         return socket.recv(1024).decode('utf-8').strip()
+    
+    def broadcast(self, message):
+        for client_socket in self.client_sockets:
+            self.send_message(client_socket, message)
+
+    def close_all_client(self):
+        self.broadcast("サーバーが閉じました")
+        for client_socket in self.client_sockets:
+            try:
+                client_socket.close()
+            except Exception as e:
+                print(f"クライアントの切断中にエラー: {e}")
        
 
     def start(self):
-        first_client_socket, _ = self.server_socket.accept()
-        self.client_sockets.append(first_client_socket)
-        print("最初のクライアントが接続しました")
+        try:
+            first_client_socket, _ = self.server_socket.accept()
+            self.client_sockets.append(first_client_socket)
+            print("最初のクライアントが接続しました")
 
-        # self.num_players = int(input("プレイヤーは人数を入力してください>> ")) - 1
-        self.send_message(self.client_sockets[0], "num_players")
-        self.num_players = int(self.recv_message(self.client_sockets[0]))
-        print(f"あと{self.num_players - 1}人待っています...")
+            # self.num_players = int(input("プレイヤーは人数を入力してください>> ")) - 1
+            self.send_message(self.client_sockets[0], "num_players")
+            self.num_players = int(self.recv_message(self.client_sockets[0]))
+            print(f"あと{self.num_players - 1}人待っています...")
 
-        for i in range(self.num_players - 1):
-            client_socket, _ = self.server_socket.accept()
-            self.client_sockets.append(client_socket)
-            print(f"クライアント{i+2}が接続しました")
+            for i in range(self.num_players - 1):
+                client_socket, _ = self.server_socket.accept()
+                self.client_sockets.append(client_socket)
+                print(f"クライアント{i+2}が接続しました")
 
-        # for client_socket in self.client_sockets:
-        #     self.send_message(client_socket, "name")
-        #     player_name = self.recv_message(client_socket)
-        #     self.player_names.append(player_name)
+            # for client_socket in self.client_sockets:
+            #     self.send_message(client_socket, "name")
+            #     player_name = self.recv_message(client_socket)
+            #     self.player_names.append(player_name)
 
-        # self.send_message(self.client_sockets[0], "game_mode")
-        # game_mode = self.recv_message(self.client_sockets[0])
+            # self.send_message(self.client_sockets[0], "game_mode")
+            # game_mode = self.recv_message(self.client_sockets[0])
 
-        # if game_mode == "vs":
-        # game = tgf.TypingGame(self.server_socket, self.client_sockets, "end_game2")
-        # game.start_game()
+            # if game_mode == "vs":
+            # game = tgf.TypingGame(self.server_socket, self.client_sockets, "end_game2")
+            # game.start_game()
 
-        game = lg.LeagueGame(self.server_socket, self.client_sockets)
-        asyncio.run(game.start_league())
-        # elif game_mode == "team":
-        #     game = taem.TeamTypingGame(self.server_socket, self.client_sockets)
-        #     game.start_game()
+            game = lg.LeagueGame(self.server_socket, self.client_sockets)
+            asyncio.run(game.start_league())
+            # elif game_mode == "team":
+            #     game = taem.TeamTypingGame(self.server_socket, self.client_sockets)
+            #     game.start_game()
 
+        except KeyboardInterrupt:
+            print("サーバーが停止されました")
+        except Exception as e:
+            print(f"エラー: {e}")
+        finally:
+            self.close_all_client()
+            try:
+                self.server_socket.close()
+            except Exception as e:
+                print(f"サーバーの切断中にエラー: {e}")
+            
         
-        for client_socket in self.client_sockets:
-            client_socket.close()
-
-        self.server_socket.close()
-
 if __name__ == "__main__":
     server = TypingServer()
     server.start()

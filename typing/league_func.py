@@ -64,10 +64,7 @@ class LeagueGame:
     async def play_match(self, player1, player2):
         player_names = [player1["name"], player2["name"]]
         
-        self.send_message(player1["socket"], f"\n{player1['name']} vs {player2['name']}")
-        self.send_message(player2["socket"], f"\n{player1['name']} vs {player2['name']}")
-                
-
+        
         game = tgf.TypingGame(self.server_socket, [player1["socket"], player2["socket"]], "end_game1", player_names)
         try:
             await asyncio.to_thread(game.start_game)
@@ -81,6 +78,27 @@ class LeagueGame:
             player2["win"] += 1
 
 
+    async def sudden_death(self, tied_players):
+        self.broadcast("サドンデス突入!!!")
+
+        tied_sockets = [player["socket"] for player in tied_players]
+        tied_names = [player["name"] for player in tied_players]
+
+        name_message = " vs ".join(tied_names)
+       
+        self.broadcast(name_message)
+        time.sleep(0.2)
+        input("準備ができたらEnter>>")
+        game = tgf.TypingGame(self.server_socket, tied_sockets, "end_game1", tied_names)
+
+        try:
+            await asyncio.to_thread(game.start_game)
+        except Exception as e:
+            print(f"試合中にエラー: {e}")
+
+        scores = game.player_scores
+        winner_idx = scores.index(max(scores))
+        return tied_players[winner_idx]
     
 
     async def start_league(self):
@@ -97,10 +115,20 @@ class LeagueGame:
         #試合開始
         for round_idx, current_round in enumerate(self.rounds):
             current_matches = []
+            #対戦相手を表示
             for player1_idx, player2_idx in current_round:
                 player1 = self.players[player1_idx]
                 player2 = self.players[player2_idx]
                 
+                self.send_message(player1["socket"], f"\n対戦: {player1['name']} vs {player2['name']}")
+                self.send_message(player2["socket"], f"\n対戦: {player1['name']} vs {player2['name']}")
+                
+            time.sleep(0.2)
+            input("準備ができたらEnter>>")
+            #試合を非同期で開始
+            for player1_idx, player2_idx in current_round:
+                player1 = self.players[player1_idx]
+                player2 = self.players[player2_idx]
                 current_matches.append(self.play_match(player1, player2))
             
             try:
@@ -112,9 +140,22 @@ class LeagueGame:
                 print(f"ラウンド{round_idx+1}にエラー: {e}")
 
             self.show_results()
-            input("確認出来たらEnter>>")
 
-        self.broadcast("end_game2")
-        time.sleep(0.4)
-        winner = max(self.players, key=lambda player: player["win"])
-        self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")
+        #優勝者の判定
+        max_wins = max(player["win"] for player in self.players)
+        potential_winners = []
+        for player in self.players:
+            if player["win"] == max_wins:
+                potential_winners.append(player)
+
+        if len(potential_winners) == 1:
+            self.broadcast("end_game2")
+            winner = potential_winners[0]
+            time.sleep(0.3)
+            self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")
+        else:
+            winner = await self.sudden_death(potential_winners)
+            self.broadcast("end_game2")
+            time.sleep(0.3)
+            self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")
+        
