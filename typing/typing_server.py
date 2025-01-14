@@ -1,11 +1,13 @@
 import socket
+import sys
 import asyncio
 import typing_game_func as tgf
-import team_func as taem
+import team_func as team
 import league_func as lg
 
 class TypingServer:
-    def __init__(self, host='0.0.0.0', port=65432):
+    def __init__(self, mode, host='0.0.0.0', port=65432):
+        self.mode = mode
         self.server_address = (host, port)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -14,7 +16,7 @@ class TypingServer:
         self.client_sockets = []
         self.player_names = []
         self.num_players = 0
-        print("サーバーが起動しました...")
+        print(f"サーバーが起動しました... Game Mode: {self.mode}")
 
     def send_message(self, socket, message):
         socket.sendall(message.encode('utf-8'))
@@ -33,41 +35,53 @@ class TypingServer:
                 client_socket.close()
             except Exception as e:
                 print(f"クライアントの切断中にエラー: {e}")
-       
+
+    
+    def handle_connection(self, client_socket):
+        try:
+            initial_message = self.recv_message(client_socket)
+            if initial_message == "SERVER_TEST":
+                self.send_message(client_socket, "SERVER_OK")
+                client_socket.close()
+                return False
+            elif initial_message == "CLIENT_CONNECT":
+                self.client_sockets.append(client_socket)
+                return True
+            else:
+                print(f"不明なメッセージ：{initial_message}")
+                client_socket.close()
+                return False
+        except Exception as e:
+            print(f"接続待機中にエラー: {e}")
+            client_socket.close()
+            return False
 
     def start(self):
         try:
             first_client_socket, _ = self.server_socket.accept()
-            self.client_sockets.append(first_client_socket)
-            print("最初のクライアントが接続しました")
+            if self.handle_connection(first_client_socket):
+                print(f"最初のクライアントが接続しました")
+                self.send_message(self.client_sockets[0], "num_players")
+                self.num_players = int(self.recv_message(self.client_sockets[0]))
+                print(f"あと{self.num_players - 1}人待っています...")
 
-            # self.num_players = int(input("プレイヤーは人数を入力してください>> ")) - 1
-            self.send_message(self.client_sockets[0], "num_players")
-            self.num_players = int(self.recv_message(self.client_sockets[0]))
-            print(f"あと{self.num_players - 1}人待っています...")
-
-            for i in range(self.num_players - 1):
+            while len(self.client_sockets) < self.num_players:
                 client_socket, _ = self.server_socket.accept()
-                self.client_sockets.append(client_socket)
-                print(f"クライアント{i+2}が接続しました")
+                if self.handle_connection(client_socket):
+                    print(f"クライアント{len(self.client_sockets)}が接続しました")
 
-            # for client_socket in self.client_sockets:
-            #     self.send_message(client_socket, "name")
-            #     player_name = self.recv_message(client_socket)
-            #     self.player_names.append(player_name)
-
-            # self.send_message(self.client_sockets[0], "game_mode")
-            # game_mode = self.recv_message(self.client_sockets[0])
-
-            # if game_mode == "vs":
-            # game = tgf.TypingGame(self.server_socket, self.client_sockets, "end_game2")
-            # game.start_game()
-
-            game = lg.LeagueGame(self.server_socket, self.client_sockets)
-            asyncio.run(game.start_league())
-            # elif game_mode == "team":
-            #     game = taem.TeamTypingGame(self.server_socket, self.client_sockets)
-            #     game.start_game()
+            
+            
+            if self.mode == "vs":
+                game = tgf.TypingGame(self.server_socket, self.client_sockets, "end_game2")
+                game.start_game()
+            elif self.mode == "team":
+                game = team.TeamTypingGame(self.server_socket, self.client_sockets)
+                game.start_game()
+            elif self.mode == "league":
+                game = lg.LeagueGame(self.server_socket, self.client_sockets)
+                asyncio.run(game.start_league())
+            
 
         except KeyboardInterrupt:
             print("サーバーが停止されました")
@@ -82,5 +96,14 @@ class TypingServer:
             
         
 if __name__ == "__main__":
-    server = TypingServer()
+    if len(sys.argv) != 2:
+        print("実行方法: python3 typing_server.py <mode>")
+        sys.exit(1)
+
+    mode = sys.argv[1]
+    if mode not in ["vs", "team", "league"]:
+        print("mode: vs or team or league")
+        sys.exit(1)
+
+    server = TypingServer(mode)
     server.start()

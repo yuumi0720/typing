@@ -3,11 +3,12 @@ import time
 import typing_functions as tf
 
 class TeamTypingGame:
-    def __init__(self, server_socket, client_sockets, score_limit=10):
+    def __init__(self, server_socket, client_sockets, score_limit=2):
         self.server_socket = server_socket
         self.client_sockets = client_sockets
         self.score_limit = score_limit
         self.words = []
+        self.player_names = []
         self.team_scores = [0, 0] #チーム1とチーム2のスコア 
         self.teams = {}
 
@@ -39,43 +40,32 @@ class TeamTypingGame:
             elif team == 2:
                 grouped_teams['team2'].append(name)
 
-        print(f"\nチーム割り当て: {grouped_teams}")
         self.broadcast(f"\nチーム割り当て: {grouped_teams}")
 
     def send_turn_message(self, active_players, message, all_players):
         # 対戦中のプレイヤーには単語、それ以外は待機
         for i, player_socket in enumerate(all_players):
             if i in active_players:
-                if player_socket == self.server_socket:
-                    print(f"\n単語: {message}")
-                else:
-                    self.send_message(player_socket, f"単語: {message}")
+                self.send_message(player_socket, f"単語: {message}")
+           
             else:
-                if player_socket == self.server_socket:
-                    print("\nwait...")
-                else:
-                    self.send_message(player_socket, "wait")
+                self.send_message(player_socket, "wait")
 
                
     def collect_inputs(self, player_sockets):
         player_times = []
         player_inputs = []
 
-        start_time = time.time()
-
         for player_socket in player_sockets:
-            if player_socket == self.server_socket:
-                player_input = input("入力: ").strip()
-                player_time = time.time() - start_time
-
-            else:
-                response = self.recv_message(player_socket)
-                player_input, player_time = response.split(',')
-                player_time = float(player_time)
+            print("recv_before")
+            response = self.recv_message(player_socket)
+            player_input, player_time = response.split(',')
+            player_time = float(player_time)
 
             player_inputs.append(player_input)
             player_times.append(float(f"{player_time:.2f}"))
-            
+        
+        print(player_inputs)
         return player_inputs, player_times
     
     
@@ -90,38 +80,32 @@ class TeamTypingGame:
             results += f" team{i+1}: {score}"
     
         self.broadcast(results)
-        print(results)
        
        
     def start_game(self):
-        player_names = []
-        player_name = input("名前を入力>> ")
-        player_names.append(player_name)
-
+        self.broadcast("name")
         for client_socket in self.client_sockets:
             client_name = self.recv_message(client_socket)
-            player_names.append(client_name)
+            self.player_names.append(client_name)
 
-
-        self.assign_name(player_names)
+        self.assign_name(self.player_names)
         
 
         # サーバーがモードを選択し、全員に通知する
-        while True:
-            mode = input("モードを選択してね easy or hard>> ")
-            if mode == "easy":
-                self.words = tf.load_words('words.txt')
-                break
-            elif mode == "hard":
-                self.words = tf.load_words('difficult_words.txt')
-                break
+        # while True:
+        #     mode = input("モードを選択してね easy or hard>> ")
+        #     if mode == "easy":
+        self.words = tf.load_words('words.txt')
+        #         break
+        #     elif mode == "hard":
+        #         self.words = tf.load_words('difficult_words.txt')
+        #         break
             
-        self.broadcast(mode)
-        time.sleep(1)
+        # self.broadcast(mode)
+        # time.sleep(1)
 
 
         self.broadcast("ゲーム開始まで2秒...")
-        print("ゲーム開始まで2秒...")
         time.sleep(2)
 
         current_round = 0
@@ -143,41 +127,30 @@ class TeamTypingGame:
             team2_index = current_round % len(team2_players)
             taem2_player = team2_players[team2_index]
 
-            team1_socket = (
-                self.server_socket
-                if taem1_player == player_names[0]
-                else self.client_sockets[player_names.index(taem1_player) - 1]
-            )
-            team2_socket = (
-                self.server_socket
-                if taem2_player == player_names[0]
-                else self.client_sockets[player_names.index(taem2_player) - 1]
-            )
+            team1_socket = self.client_sockets[self.player_names.index(taem1_player)]
+            
+            team2_socket = self.client_sockets[self.player_names.index(taem2_player)]
+            
 
             
             word = random.choice(self.words)
             self.words.remove(word)
 
-            server_id = 0
-            if team1_socket == self.server_socket:
-                team1_id = server_id
-            else:
-                team1_id = player_names.index(taem1_player)
+            
+            team1_id = self.player_names.index(taem1_player)
+            team2_id = self.player_names.index(taem2_player)
 
-            if team2_socket == self.server_socket:
-                team2_id = server_id
-            else:
-                team2_id = player_names.index(taem2_player)
-
-            all_players = [self.server_socket] + self.client_sockets
+            all_players = self.client_sockets
 
             self.send_turn_message(
                 [team1_id, team2_id],
                 word,
                 all_players
             )
-
+            print("send_after")
             player_inputs, player_times = self.collect_inputs([team1_socket, team2_socket])
+            print(player_inputs)
+            print("collect_after")
             
 
             # 正誤判定
@@ -209,10 +182,9 @@ class TeamTypingGame:
             current_round += 1
 
 
-        self.broadcast("end")
+        self.broadcast("end_game2")
         # 勝敗の決定
         winner = self.team_scores.index(max(self.team_scores))
        
-        print(f"team{winner+1}が勝利しました！")
         self.broadcast(f"team{winner+1}が勝利しました！")
         

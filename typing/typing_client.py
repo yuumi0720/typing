@@ -3,11 +3,12 @@ import time
 
 class TypingClient:
     def __init__(self, host='127.0.0.1', port=65432):
-        
         self.server_address = (host, port)
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client_socket.connect(self.server_address)
         print("サーバーに接続しました。")
+
+        self.send_message(self.client_socket, "CLIENT_CONNECT")
 
     def send_message(self, socket, message):
         socket.sendall(message.encode('utf-8'))
@@ -34,23 +35,16 @@ class TypingClient:
                     name = input("名前を入力>> ")
                     self.send_message(self.client_socket, name)
                     
-                # elif message == "game_mode":
-                #     game_mode = input("vs or team >>")
-                #     self.send_message(self.client_socket, game_mode)
-                
-                # elif message == "mode_select":
-                #     mode_select = input("モードを選択 easy or hard >> ")
-                #     self.send_message(self.client_socket, mode_select)
                 
                 elif "ゲーム開始" in message:
                     print(message)
                 
-                # サーバーから単語を受け取る
-                # if word == "wait":
-                #     print("\nwait...")
-                #     result = self.recv_message(self.client_socket)
-                #     print(result)
-                #     continue
+                elif message== "wait":
+                    print("\nwait...")
+                    result = self.recv_message(self.client_socket)
+                    print(result)
+                    continue
+
                 elif message == "end_game1":
                     time.sleep(0.2)
                     print("\nゲーム終了")
@@ -65,14 +59,16 @@ class TypingClient:
                     break
                 
                 elif "単語" in message:
+                    time.sleep(0.2)
                     print(f"\n{message}")
                     start_time = time.time()
                     player_input = input("入力: ")
                     player_time = time.time() - start_time
 
+                    print("inputed_after")
                     # 入力結果とタイムをサーバーに送信
                     self.send_message(self.client_socket, f"{player_input}, {player_time:.2f}")
-                    
+                    print("inp_send_after")
                     score_result = self.recv_message(self.client_socket)
                     print(score_result)
 
