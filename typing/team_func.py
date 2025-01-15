@@ -1,6 +1,7 @@
 import random
 import time
 import typing_functions as tf
+import log_handler as log
 
 class TeamTypingGame:
     def __init__(self, server_socket, client_sockets, score_limit=2):
@@ -42,9 +43,9 @@ class TeamTypingGame:
 
         self.broadcast(f"\nチーム割り当て: {grouped_teams}")
 
-    def send_turn_message(self, active_players, message, all_players):
+    def send_turn_message(self, active_players, message):
         # 対戦中のプレイヤーには単語、それ以外は待機
-        for i, player_socket in enumerate(all_players):
+        for i, player_socket in enumerate(self.client_sockets):
             if i in active_players:
                 self.send_message(player_socket, f"単語: {message}")
            
@@ -140,12 +141,10 @@ class TeamTypingGame:
             team1_id = self.player_names.index(taem1_player)
             team2_id = self.player_names.index(taem2_player)
 
-            all_players = self.client_sockets
 
             self.send_turn_message(
                 [team1_id, team2_id],
                 word,
-                all_players
             )
             print("send_after")
             player_inputs, player_times = self.collect_inputs([team1_socket, team2_socket])
@@ -188,3 +187,7 @@ class TeamTypingGame:
        
         self.broadcast(f"team{winner+1}が勝利しました！")
         
+
+        team_results = {f"Team {i+1}": score for i, score in enumerate(self.team_scores)}
+        winner = f"Team {self.team_scores.index(max(self.team_scores)) + 1}"
+        log.save_log("team", self.player_names, team_results, winner)

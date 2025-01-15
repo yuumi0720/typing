@@ -2,8 +2,8 @@
 import itertools
 import asyncio
 import time
-import threading
 import typing_game_func as tgf
+import log_handler as log
 
 
 class LeagueGame:
@@ -12,7 +12,6 @@ class LeagueGame:
         self.client_sockets = client_sockets
         self.players = [{"name": "", "win": 0}for _ in client_sockets]
         self.rounds = [] #ラウンドごとの試合スケジュール
-        self.lock = threading.Lock()
 
     def send_message(self, socket, message):
         try:
@@ -154,8 +153,14 @@ class LeagueGame:
             time.sleep(0.3)
             self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")
         else:
-            winner = await self.sudden_death(potential_winners)
+            time.sleep(0.3)
+            sudden_death_winner = await self.sudden_death(potential_winners)
             self.broadcast("end_game2")
             time.sleep(0.3)
-            self.broadcast(f"優勝者{winner['name']}({winner['win']}勝)")
+            self.broadcast(f"優勝者{sudden_death_winner['name']}({sudden_death_winner['win']}勝)")
         
+
+        player_names = [player["name"] for player in self.players]
+        player_results = {player["name"]: player["win"] for player in self.players}
+        winner = potential_winners[0]["name"] if len(potential_winners) == 1 else f"サドンデスで{sudden_death_winner['name']}"
+        log.save_log("league", player_names, player_results, winner)

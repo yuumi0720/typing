@@ -3,6 +3,7 @@ import time
 import socket
 import typing_functions as tf
 import typing_client as client
+import log_handler as log
 import subprocess
 
 
@@ -19,10 +20,14 @@ def is_server_running(host='127.0.0.1', port=65432):
 def main():
     #コマンドラインから指定
     parser = argparse.ArgumentParser(description="タイピングゲームを選択してね")
-    parser.add_argument('mode', choices=['one', 'two', 'd1','vs', 'team', 'league'], help="実行するゲームを選択してね")
+    parser.add_argument('mode', choices=['one', 'two', 'd1','vs', 'team', 'league', 'log'], help="実行するゲームを選択してね")
     args = parser.parse_args()
 
-    if args.mode in ['one', 'two', 'd1']:
+    if args.mode == 'log':
+        log.show_log()
+        return
+    
+    elif args.mode in ['one', 'two', 'd1']:
         if args.mode == 'one':
             tf.time_limit('words.txt')
         elif args.mode == 'two':
@@ -34,7 +39,6 @@ def main():
         if not is_server_running():
             try:
                 subprocess.Popen(["python3", "typing_server.py", args.mode])
-                print("サーバーをバックグラウンドで起動しました。")
                 time.sleep(1)
             except Exception as e:
                 print(f"サーバーの起動に失敗しました: {e}")

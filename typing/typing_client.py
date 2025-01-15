@@ -65,10 +65,8 @@ class TypingClient:
                     player_input = input("入力: ")
                     player_time = time.time() - start_time
 
-                    print("inputed_after")
                     # 入力結果とタイムをサーバーに送信
                     self.send_message(self.client_socket, f"{player_input}, {player_time:.2f}")
-                    print("inp_send_after")
                     score_result = self.recv_message(self.client_socket)
                     print(score_result)
 

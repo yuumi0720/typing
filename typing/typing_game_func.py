@@ -1,6 +1,7 @@
 import random
 import time
 import typing_functions as tf
+import log_handler as log
 
 class TypingGame:
     def __init__(self, server_socket, client_sockets,  end_massage, player_names=None):
@@ -126,4 +127,11 @@ class TypingGame:
         winner = self.player_scores.index(max(self.player_scores))
         time.sleep(0.3)
         self.broadcast(f"{self.player_names[winner]}が勝利しました！")
+
+        
+        if self.end_massage == "end_game2":
+            player_names = self.player_names
+            player_results = dict(zip(self.player_names, self.player_scores))
+            winner = self.player_names[self.player_scores.index(max(self.player_scores))]
+            log.save_log("vs", player_names, player_results, winner)
        

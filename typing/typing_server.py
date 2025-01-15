@@ -29,7 +29,6 @@ class TypingServer:
             self.send_message(client_socket, message)
 
     def close_all_client(self):
-        self.broadcast("サーバーが閉じました")
         for client_socket in self.client_sockets:
             try:
                 client_socket.close()
