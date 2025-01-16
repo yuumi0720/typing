@@ -41,7 +41,14 @@ class TeamTypingGame:
             elif team == 2:
                 grouped_teams['team2'].append(name)
 
-        self.broadcast(f"\nチーム割り当て: {grouped_teams}")
+
+        formatted_teams = ", ".join(
+        f"{team}: [{', '.join(members)}]" for team, members in grouped_teams.items()
+        )
+        self.broadcast(f"\nチーム割り当て: {formatted_teams}")
+
+        input("準備ができたらEnter>>")
+
 
     def send_turn_message(self, active_players, message):
         # 対戦中のプレイヤーには単語、それ以外は待機
@@ -58,7 +65,6 @@ class TeamTypingGame:
         player_inputs = []
 
         for player_socket in player_sockets:
-            print("recv_before")
             response = self.recv_message(player_socket)
             player_input, player_time = response.split(',')
             player_time = float(player_time)
@@ -146,10 +152,7 @@ class TeamTypingGame:
                 [team1_id, team2_id],
                 word,
             )
-            print("send_after")
             player_inputs, player_times = self.collect_inputs([team1_socket, team2_socket])
-            print(player_inputs)
-            print("collect_after")
             
 
             # 正誤判定
@@ -186,8 +189,12 @@ class TeamTypingGame:
         winner = self.team_scores.index(max(self.team_scores))
        
         self.broadcast(f"team{winner+1}が勝利しました！")
-        
 
+        
+        teams = {
+        "team1": [name for name, team in self.teams.items() if team == 1],
+        "team2": [name for name, team in self.teams.items() if team == 2]
+        }
         team_results = {f"Team {i+1}": score for i, score in enumerate(self.team_scores)}
         winner = f"Team {self.team_scores.index(max(self.team_scores)) + 1}"
-        log.save_log("team", self.player_names, team_results, winner)
+        log.save_log("team", self.player_names, team_results, winner, teams)
