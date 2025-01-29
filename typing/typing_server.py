@@ -11,12 +11,18 @@ class TypingServer:
         self.server_address = (host, port)
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.server_socket.bind(self.server_address)
+        try:
+            self.server_socket.bind(self.server_address)
+        except OSError as e:
+            if "Address already in use" in str(e):
+                pass
+            else:
+                raise
         self.server_socket.listen()
         self.client_sockets = []
         self.player_names = []
         self.num_players = 0
-        print(f"サーバーが起動しました... Game Mode: {self.mode}")
+        print(f"サーバー起動... Game Mode: {self.mode}")
 
     def send_message(self, socket, message):
         socket.sendall(message.encode('utf-8'))

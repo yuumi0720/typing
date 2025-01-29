@@ -7,3 +7,116 @@ Results:
   - b: 0 point 
 Winner: a
 ========================================
+========================================
+Date: 2025-01-22 14:12:14
+Mode: vs
+Players: a, b
+Results:
+  - a: 0 point 
+  - b: 2 point 
+Winner: b
+========================================
+========================================
+Date: 2025-01-22 17:17:53
+Mode: vs
+Players: a, b
+Results:
+  - a: 2 point 
+  - b: 0 point 
+Winner: a
+========================================
+========================================
+Date: 2025-01-24 16:05:10
+Mode: team
+Players: a, b, c, d
+Teams:
+  team1: a, c
+  team2: b, d
+Results:
+  - Team 1: 2 point 
+  - Team 2: 0 point 
+Winner: Team 1
+========================================
+========================================
+Date: 2025-01-24 16:10:17
+Mode: team
+Players: a, b, c, d
+Teams:
+  team1: a, b
+  team2: c, d
+Results:
+  - Team 1: 2 point 
+  - Team 2: 1 point 
+Winner: Team 1
+========================================
+========================================
+Date: 2025-01-24 16:41:51
+Mode: league
+Players: a, b, c, d
+Results:
+  - a: 2 win 
+  - b: 1 win 
+  - c: 2 win 
+  - d: 1 win 
+Winner: サドンデスでa
+========================================
+========================================
+Date: 2025-01-29 08:05:22
+Mode: team
+Players: a, b, c
+Teams:
+  team1: b
+  team2: a, c
+Results:
+  - Team 1: 0 point 
+  - Team 2: 2 point 
+Winner: Team 2
+========================================
+========================================
+Date: 2025-01-29 08:41:37
+Mode: team
+Players: a, b, c
+Teams:
+  team1: c
+  team2: a, b
+Results:
+  - Team 1: 1 point 
+  - Team 2: 2 point 
+Winner: Team 2
+========================================
+========================================
+Date: 2025-01-29 08:42:37
+Mode: team
+Players: a, b, c, d
+Teams:
+  team1: b, d
+  team2: a, c
+Results:
+  - Team 1: 0 point 
+  - Team 2: 2 point 
+Winner: Team 2
+========================================
+========================================
+Date: 2025-01-29 08:44:18
+Mode: team
+Players: a, b, c, d
+Teams:
+  team1: b, c
+  team2: a, d
+Results:
+  - Team 1: 1 point 
+  - Team 2: 2 point 
+Winner: Team 2
+========================================
+========================================
+Date: 2025-01-29 08:45:21
+Mode: team
+Players: a, b, c
+Teams:
+  team1: c
+  team2: a, b
+Results:
+  - Team 1: 2 point 
+  - Team 2: 1 point 
+Winner: Team 1
+========================================

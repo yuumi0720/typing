@@ -72,7 +72,6 @@ class TeamTypingGame:
             player_inputs.append(player_input)
             player_times.append(float(f"{player_time:.2f}"))
         
-        print(player_inputs)
         return player_inputs, player_times
     
     
@@ -187,7 +186,7 @@ class TeamTypingGame:
         self.broadcast("end_game2")
         # 勝敗の決定
         winner = self.team_scores.index(max(self.team_scores))
-       
+        time.sleep(0.5)
         self.broadcast(f"team{winner+1}が勝利しました！")
 
         

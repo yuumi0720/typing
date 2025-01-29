@@ -63,7 +63,6 @@ class LeagueGame:
     async def play_match(self, player1, player2):
         player_names = [player1["name"], player2["name"]]
         
-        
         game = tgf.TypingGame(self.server_socket, [player1["socket"], player2["socket"]], "end_game1", player_names)
         try:
             await asyncio.to_thread(game.start_game)
