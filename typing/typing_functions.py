@@ -93,7 +93,7 @@ def time_limit(file_txt):
 def clear_time(file_txt):
      #得点の定義
     count = 1
-    score_clear = 10
+    score_clear = 20
 
     print("=== タイピングゲームへようこそ！ ===")
     print(f"{score_clear}個の単語をできるだけ早く入力してください。")

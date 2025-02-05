@@ -31,7 +31,6 @@ def show_log():
         print("ログファイルが見つかりません。")
         return
     
-    three_days_ago = datetime.now() - timedelta(days=3)
     modes = ["vs", "team", "league"]
     print("表示したいモードを選択してください:")
     for i, mode in enumerate(modes, start=1):
@@ -50,24 +49,27 @@ def show_log():
     display_logs = []
     current_log = []
     include_log = False
-
-    for line in logs:
+    count = 0
+    for line in reversed(logs):
         if "========================" in line:
             if current_log and include_log:
                 current_log.append(line)
-                display_logs.append("".join(current_log))
+                display_logs.append("".join(reversed(current_log)))
+                count += 1
+                if count >= 10:
+                    break
             current_log = []
             include_log = False
         
-        if line.startswith("Date:"):
-            log_date = datetime.strptime(line.split(": ", 1)[1].strip(), '%Y-%m-%d %H:%M:%S')
-            if log_date >= three_days_ago:
-                include_log = True
+        # if line.startswith("Date:"):
+        #     log_date = datetime.strptime(line.split(": ", 1)[1].strip(), '%Y-%m-%d %H:%M:%S')
+        #     if log_date >= three_days_ago:
+        #         include_log = True
         
         if line.startswith("Mode:"):
             log_mode = line.split(": ", 1)[1].strip()
             if log_mode == mode_to_display:
-                include_log = include_log and True
+                include_log = True
             else:
                 include_log = False
 
@@ -77,6 +79,8 @@ def show_log():
         display_logs.append("".join(current_log))
     
     if display_logs:
-        print("\n".join(display_logs))
+        print("\n".join(reversed(display_logs)))
     else:
         print("指定されたモードのログが見つかりません。")
+
+        

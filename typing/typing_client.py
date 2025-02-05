@@ -77,13 +77,3 @@ class TypingClient:
             print(f"エラー: {e}")
         finally:
             self.client_socket.close()
-
-    # def start(self):
-    #     game = tgf.TypingGame(None, [self.client_socket])
-    #     game.start_game()
-
-    #     self.client_socket.close()
-
-# if __name__ == "__main__":
-#     client = TypingClinet()
-#     client.start()

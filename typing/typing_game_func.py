@@ -7,7 +7,7 @@ class TypingGame:
     def __init__(self, server_socket, client_sockets,  end_massage, player_names=None):
         self.server_socket = server_socket
         self.client_sockets = client_sockets
-        self.score_limit = 2
+        self.score_limit = 5
         self.words = []
         self.player_scores = [0] * (len(client_sockets)) 
         self.player_names = player_names if player_names else []
@@ -68,18 +68,9 @@ class TypingGame:
                 client_name = self.recv_message(client_socket)
                 self.player_names.append(client_name)
 
-    # サーバーがモードを選択し、全員に通知する
-
-        # モードを選択し、全員に通知する
-        # self.send_message(self.client_sockets[0], "mode_select")
-        # mode = self.recv_message(self.client_sockets[0])
-        # while True:
-        #     if mode == "easy":
+    
         self.words = tf.load_words('words.txt')
-            #     break
-            # elif mode == "hard":
-            #     self.words = tf.load_words('difficult_words.txt')
-            #     break
+           
             
         self.broadcast("ゲーム開始まで3秒...")
         time.sleep(3)

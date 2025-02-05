@@ -4,7 +4,7 @@ import typing_functions as tf
 import log_handler as log
 
 class TeamTypingGame:
-    def __init__(self, server_socket, client_sockets, score_limit=2):
+    def __init__(self, server_socket, client_sockets, score_limit=5):
         self.server_socket = server_socket
         self.client_sockets = client_sockets
         self.score_limit = score_limit
@@ -97,19 +97,9 @@ class TeamTypingGame:
         self.assign_name(self.player_names)
         
 
-        # サーバーがモードを選択し、全員に通知する
-        # while True:
-        #     mode = input("モードを選択してね easy or hard>> ")
-        #     if mode == "easy":
+        
         self.words = tf.load_words('words.txt')
-        #         break
-        #     elif mode == "hard":
-        #         self.words = tf.load_words('difficult_words.txt')
-        #         break
-            
-        # self.broadcast(mode)
-        # time.sleep(1)
-
+        
 
         self.broadcast("ゲーム開始まで2秒...")
         time.sleep(2)
