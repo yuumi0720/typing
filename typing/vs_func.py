@@ -56,7 +56,8 @@ class TypingGame:
             if i != 0:
                 results += "  -  "
             results += f"[{player_names[i]}] {player_scores[i]}"
-    
+
+        time.sleep(0.2)
         self.broadcast(results)
        
        
