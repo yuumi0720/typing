@@ -101,8 +101,8 @@ class TeamGame:
         self.words = tf.load_words('text/words.txt')
         
 
-        self.broadcast("ゲーム開始まで2秒...")
-        time.sleep(2)
+        self.broadcast("ゲーム開始まで3秒...")
+        time.sleep(3)
 
         current_round = 0
         team1_players = []
