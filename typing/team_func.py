@@ -3,7 +3,7 @@ import time
 import typing_functions as tf
 import log_handler as log
 
-class TeamTypingGame:
+class TeamGame:
     def __init__(self, server_socket, client_sockets, score_limit=5):
         self.server_socket = server_socket
         self.client_sockets = client_sockets

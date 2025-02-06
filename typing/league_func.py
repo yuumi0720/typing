@@ -2,7 +2,7 @@
 import itertools
 import asyncio
 import time
-import typing_game_func as tgf
+import vs_func as vs
 import log_handler as log
 
 
@@ -63,7 +63,7 @@ class LeagueGame:
     async def play_match(self, player1, player2):
         player_names = [player1["name"], player2["name"]]
         
-        game = tgf.TypingGame(self.server_socket, [player1["socket"], player2["socket"]], "end_game1", player_names)
+        game = vs.TypingGame(self.server_socket, [player1["socket"], player2["socket"]], "end_game1", player_names)
         try:
             await asyncio.to_thread(game.start_game)
         except Exception as e:
@@ -87,7 +87,7 @@ class LeagueGame:
         self.broadcast(name_message)
         time.sleep(0.2)
         input("準備ができたらEnter>>")
-        game = tgf.TypingGame(self.server_socket, tied_sockets, "end_game1", tied_names)
+        game = vs.TypingGame(self.server_socket, tied_sockets, "end_game1", tied_names)
 
         try:
             await asyncio.to_thread(game.start_game)

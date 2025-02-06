@@ -1,7 +1,7 @@
 import socket
 import sys
 import asyncio
-import typing_game_func as tgf
+import vs_func as vs
 import team_func as team
 import league_func as lg
 
@@ -78,10 +78,10 @@ class TypingServer:
             
             
             if self.mode == "vs":
-                game = tgf.TypingGame(self.server_socket, self.client_sockets, "end_game2")
+                game = vs.TypingGame(self.server_socket, self.client_sockets, "end_game2")
                 game.start_game()
             elif self.mode == "team":
-                game = team.TeamTypingGame(self.server_socket, self.client_sockets)
+                game = team.TeamGame(self.server_socket, self.client_sockets)
                 game.start_game()
             elif self.mode == "league":
                 game = lg.LeagueGame(self.server_socket, self.client_sockets)
