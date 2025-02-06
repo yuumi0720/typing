@@ -69,7 +69,7 @@ class TypingGame:
                 self.player_names.append(client_name)
 
     
-        self.words = tf.load_words('words.txt')
+        self.words = tf.load_words('text/words.txt')
            
             
         self.broadcast("ゲーム開始まで3秒...")

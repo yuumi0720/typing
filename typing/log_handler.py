@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 
-LOG_FILE = "typing_log.txt"
+LOG_FILE = "text/typing_log.txt"
 
 def save_log(mode, players, results, winner, teams=None):
     with open(LOG_FILE, "a", encoding="utf-8") as f:
@@ -61,10 +61,6 @@ def show_log():
             current_log = []
             include_log = False
         
-        # if line.startswith("Date:"):
-        #     log_date = datetime.strptime(line.split(": ", 1)[1].strip(), '%Y-%m-%d %H:%M:%S')
-        #     if log_date >= three_days_ago:
-        #         include_log = True
         
         if line.startswith("Mode:"):
             log_mode = line.split(": ", 1)[1].strip()

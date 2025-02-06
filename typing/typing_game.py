@@ -43,9 +43,9 @@ def main():
     
     elif args_mode[0] in ['skill', 'speed']:
         if args_mode[0] == 'skill':
-            tf.time_limit('words.txt')
+            tf.time_limit('text/words.txt')
         elif args_mode[0] == 'speed':
-            tf.clear_time('words.txt')
+            tf.clear_time('text/words.txt')
     elif args_mode[0] in ['vs', 'team', 'league']:
         if not is_server_running():
             try:

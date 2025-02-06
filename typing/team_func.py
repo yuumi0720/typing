@@ -98,7 +98,7 @@ class TeamTypingGame:
         
 
         
-        self.words = tf.load_words('words.txt')
+        self.words = tf.load_words('text/words.txt')
         
 
         self.broadcast("ゲーム開始まで2秒...")
